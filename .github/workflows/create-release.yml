@@ -1,0 +1,52 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+          body: >-
+            Release Title: 🚀 Version 1.0.0 - Initial Release
+            Tag Version: v1.0.0
+            Release Date: November 25, 2024
+
+            What’s New?
+            This is the initial release of our Node.js application! Here’s what you can expect in version 1.0.0:
+                •	🌟 Core Features:
+                •	A fully functional RESTful API built with Express.js.
+                •	Dynamic templating with Handlebars for seamless rendering.
+                •	Static file serving for assets like images, CSS, and JavaScript.
+                •	🛠 Endpoints:
+                •	/: Welcome page displaying app info.
+                •	/who: Learn about the creators of this application.
+                •	/contact: A simple contact form to reach us.
+                •	🔧 Configuration:
+                •	Environment-specific configuration via a config.js file.
+                •	Runs on a configurable port (default: 3000).
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./app.zip
+          asset_name: app.zip
+          asset_content_type: application/zip
